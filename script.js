@@ -1,16 +1,3 @@
-/**
- * SIMULADOR DE INVENTARIO WEB
- * -------------------------------------------------------------
- * Archivo de lógica de negocio (Plantilla lista para implementar)
- * 
- * En este archivo deberás programar la lógica del simulador. 
- * A continuación, se detalla la estructura básica recomendada para:
- * 1. Seleccionar los elementos del DOM.
- * 2. Manejar el estado de la aplicación (los productos).
- * 3. Escuchar los eventos del usuario (clicks, envíos de formulario).
- * 4. Renderizar y persistir los datos en LocalStorage.
- */
-
 // ==========================================================================
 // 1. REFERENCIAS A ELEMENTOS DEL DOM
 // ==========================================================================
@@ -46,9 +33,6 @@ const salidaMargen = document.getElementById('salida-margen');
 // ==========================================================================
 // 2. ESTADO DE LA APLICACIÓN
 // ==========================================================================
-// Aquí guardarás el array de productos cargados. 
-// Ejemplo de estructura de un producto:
-// { id: 'uuid-o-timestamp', nombre: 'Laptop', categoria: 'Electrónica', proveedor: 'ABC', precio: 1000, costo: 700 }
 let inventario = [];
 
 
@@ -71,18 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // 4. FUNCIONES DE APERTURA / CIERRE DE MODAL
 // ==========================================================================
 
-/**
- * Muestra el modal agregando la clase 'active' o modificando el style.display
- */
 function abrirModal() {
-    //modalIngreso.style.display = 'flex';
     modalIngreso.classList.add('active');
 }
 
-/**
- * Oculta el modal removiendo la clase 'active' o modificando el style.display
- * TIP: Recuerda también resetear el formulario al cerrar.
- */
 function cerrarModal() {
     modalIngreso.classList.remove('active');
     formularioProducto.reset();
@@ -98,17 +74,9 @@ function cerrarModal() {
 // ==========================================================================
 // 5. EVENT LISTENERS PARA EL MODAL
 // ==========================================================================
-
-// Abrir modal al hacer click en el botón de agregar
 btnAbrirModal.addEventListener('click', abrirModal);
-
-// Cerrar modal al hacer click en el botón "X"
 btnCerrarModal.addEventListener('click', cerrarModal);
-
-// Cerrar modal al hacer click en el botón "Cancelar"
 btnCancelarModal.addEventListener('click', cerrarModal);
-
-// Opcional: Cerrar modal si el usuario hace click fuera del contenido (en el overlay)
 modalIngreso.addEventListener('click', (e) => {
     if (e.target === modalIngreso) {
         cerrarModal();
@@ -119,7 +87,6 @@ modalIngreso.addEventListener('click', (e) => {
 // ==========================================================================
 // 6. CONTROLADORES DE INVENTARIO (CREAR - EDITAR - ELIMINAR)
 // ==========================================================================
-
 /**
  * Se activa al enviar (submit) el formulario de producto.
  * @param {Event} e - Objeto de evento del formulario
@@ -170,11 +137,10 @@ function guardarProducto(e) {
     renderizarTabla();
     actualizarMetricas();
     guardarEnLocalStorage();
-    // 7. Cerrar modal y limpiar formulario
+
     cerrarModal();
 }
 
-// Escuchar el evento submit del formulario
 formularioProducto.addEventListener('submit', guardarProducto);
 
 /**
@@ -182,25 +148,21 @@ formularioProducto.addEventListener('submit', guardarProducto);
  * @param {string|number} id - Identificador del producto a editar
  */
 function editarProducto(id) {
-    // 1. Buscar el producto por ID
     const producto = inventario.find(p => p.id === id);
     if (!producto) return;
 
-    // 2. Llenar el formulario con los datos
     inputNombre.value = producto.nombre;
     inputCategoria.value = producto.categoria;
     inputProveedor.value = producto.proveedor;
     inputPrecio.value = producto.precio;
     inputCosto.value = producto.costo;
 
-    // 3 y 4. Cambiar textos del modal
     modalIngreso.querySelector('h2').textContent = 'Editar Producto';
     btnGuardarProducto.textContent = 'Actualizar Producto';
 
-    // 6. Guardar el ID en dataset para saber cuál actualizar al enviar
+    // Guarda el ID en dataset para saber cuál actualizar al enviar
     formularioProducto.dataset.id = id;
 
-    // Abrir el modal
     abrirModal();
 }
 
@@ -209,16 +171,9 @@ function editarProducto(id) {
  * @param {string|number} id - Identificador del producto a eliminar
  */
 function eliminarProducto(id) {
-    // 1. Filtramos el array para conservar solo los productos que NO coincidan con el ID seleccionado
     inventario = inventario.filter(producto => producto.id !== id);
-
-    // 2. Volvemos a redibujar la tabla con el array actualizado
     renderizarTabla();
-
-    // 3. Guardar los datos en el almacenamiento local (LocalStorage)
     guardarEnLocalStorage();
-
-    // 4. Volvemos a recalcular las métricas del dashboard
     actualizarMetricas();
 }
 
@@ -241,10 +196,10 @@ function renderizarTabla() {
         sinProductosPlaceholder.classList.add('hidden');
     }
 
-    // 1. Limpiar por completo el contenedor antes de inyectar las filas reales
+    // Limpia por completo el contenedor antes de inyectar las filas reales
     listaProductos.innerHTML = '';
 
-    // 2. Recorrer el array de productos e inyectar una fila por cada elemento
+    // Recorre el array de productos e inyecta una fila por cada elemento
     inventario.forEach((producto) => {
         const fila = document.createElement('tr');
 
@@ -279,10 +234,9 @@ function renderizarTabla() {
  */
 
 function actualizarMetricas() {
-    // 1. Cantidad Total de Productos es simplemente el tamaño del array
     const totalProductos = inventario.length;
 
-    // 2. Calcular la Inversión Total sumando el costo de cada producto
+    // Calcula la Inversión Total sumando el costo de cada producto
     let inversionTotal = 0;
     // Variables para calcular el margen promedio después
     let sumaMargenes = 0;
@@ -299,10 +253,10 @@ function actualizarMetricas() {
         }
     });
 
-    // 3. Calcular el Margen Promedio
+    // Calcula el Margen Promedio
     const margenPromedio = totalProductos > 0 ? (sumaMargenes / totalProductos) : 0;
 
-    // 4. Inyectar los valores calculados en las etiquetas HTML correspondientes
+    // Inyecta los valores calculados en las etiquetas HTML correspondientes
     salidaTotalProductos.textContent = totalProductos;
     salidaInversion.textContent = `$${inversionTotal.toFixed(2)}`;
     salidaMargen.textContent = `${margenPromedio.toFixed(0)}%`;
@@ -313,21 +267,16 @@ function actualizarMetricas() {
 // 8. PERSISTENCIA CON LOCALSTORAGE
 // ==========================================================================
 
-/**
- * Guarda el estado actual del inventario en localStorage como string JSON.
- */
 function guardarEnLocalStorage() {
-    // Convertimos el array de objetos a una cadena de texto plana y la guardamos
+    // Convierte el array de objetos a una cadena de texto plana y la guardamos
     localStorage.setItem('inventario', JSON.stringify(inventario));
 }
 
-/**
- * Carga los productos guardados en localStorage si existen, de lo contrario inicializa vacío.
- */
 function cargarDeLocalStorage() {
+    // Obtiene los datos guardados
     const datosGuardados = localStorage.getItem('inventario');
 
-    // Si existen datos viejos en el navegador, los transformamos de texto a array de JS
+    // Si existen datos viejos en el navegador, los transforma de texto a array de JS
     if (datosGuardados) {
         inventario = JSON.parse(datosGuardados);
     } else {
