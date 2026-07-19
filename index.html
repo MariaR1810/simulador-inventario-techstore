@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario TechStore</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+                <h1>Inventario TechStore</h1>
+            </div>
+            <button id="btn-abrir-modal" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Agregar Producto
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-content">
+            <!-- Inventory Table Section -->
+            <section class="inventory-section">
+                <div class="section-header">
+                    <h2>Listado de Inventario</h2>
+                </div>
+                <div class="table-container">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fa-solid fa-tag"></i> Nombre</th>
+                                <th><i class="fa-solid fa-folder"></i> Categoría</th>
+                                <th><i class="fa-solid fa-dollar-sign"></i> Precio de Costo</th>
+                                <th><i class="fa-solid fa-dollar-sign"></i> Precio de Venta</th>
+                                <th><i class="fa-solid fa-truck"></i> Proveedor</th>
+                                <th class="text-center"><i class="fa-solid fa-gear"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-productos">
+                            <!-- Aca se agrega por medio del Script los datos de la tabla-->
+                        </tbody>
+                    </table>
+
+                    <!-- Estado vacío (Oculto por defecto cuando hay productos) -->
+                    <div id="sin-productos" class="empty-state ">
+                        <i class="fa-solid fa-box-open empty-icon"></i>
+                        <h3>Tu inventario está vacío</h3>
+                        <p>Comienza agregando productos utilizando el botón de la parte superior.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard / Metrics Section -->
+            <section class="dashboard-section">
+                <div class="metric-card">
+                    <div class="metric-icon bg-indigo-glow">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div class="metric-info">
+                        <h3>Productos Registrados</h3>
+                        <p id="salida-total-productos" class="metric-value">0</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon bg-emerald-glow">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div class="metric-info">
+                        <h3>Inversión Total</h3>
+                        <p id="salida-inversion" class="metric-value">$0.00</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon bg-amber-glow">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div class="metric-info">
+                        <h3>Margen de Ganancia Promedio</h3>
+                        <p id="salida-margen" class="metric-value">0%</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 Simulador de Inventario Web. Diseñado con un enfoque moderno y minimalista.</p>
+        </footer>
+    </div>
+
+    <!-- Modal Form (Hidden by default) -->
+    <div id="modal-ingreso" class="modal-overlay">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <h2>Agregar Nuevo Producto</h2>
+                </div>
+                <button id="btn-cerrar-modal" class="btn-close" aria-label="Cerrar modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body / Form -->
+            <form id="formulario-producto" class="modal-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="input-nombre"><i class="fa-solid fa-signature"></i> Nombre del Producto</label>
+                    <input type="text" id="input-nombre" required placeholder="Ej. Teclado Mecánico RGB">
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-categoria"><i class="fa-solid fa-folder-open"></i> Categoría</label>
+                        <input type="text" id="input-categoria" required placeholder="Ej. Periféricos">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-proveedor"><i class="fa-solid fa-truck-ramp-box"></i> Proveedor</label>
+                        <input type="text" id="input-proveedor" required placeholder="Ej. Global Tech">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-costo"><i class="fa-solid fa-hand-holding-dollar"></i> Costo de Compra
+                            ($)</label>
+                        <input type="number" id="input-costo" required min="0.01" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-precio"><i class="fa-solid fa-tags"></i> Precio de Venta ($)</label>
+                        <input type="number" id="input-precio" required min="0.01" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+
+                <!-- Modal Footer Actions -->
+                <div class="modal-footer">
+                    <button type="button" id="btn-cancelar-modal" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" id="btn-guardar-producto" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
